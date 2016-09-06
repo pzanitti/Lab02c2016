@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name" translatable="false">Lab02c2016</string>
+    <string name="reservation">RESERVATION</string>
+    <string name="order_your_dinner">Order your dinner!!</string>
+    <string name="select_time">Select a time:</string>
+    <string name="entree">Course</string>
+    <string name="add">Add</string>
+    <string name="confirm_order">Confirm order</string>
+
+    <string-array name="times">
+        <item>20:00</item>
+        <item>20:30</item>
+        <item>21:00</item>
+        <item>21:30</item>
+        <item>22:00</item>
+        <item>22:30</item>
+    </string-array>
+    <string name="delivery" translatable="false">DELIVERY</string>
+    <string name="dessert">Dessert</string>
+    <string name="drink">Drink</string>
+    <string name="must_select_item">You must select an item from the menu</string>
+    <string name="notify_ahead">Notify me one hour ahead</string>
+    <string name="order_is_closed">The order is closed</string>
+    <string name="restart_order">Restart</string>
+
+</resources>
