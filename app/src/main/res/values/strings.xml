@@ -15,12 +15,13 @@
         <item>22:00</item>
         <item>22:30</item>
     </string-array>
-    <string name="delivery" translatable="false">DELIVERY</string>
+    <string name="delivery">DELIVERY</string>
     <string name="dessert">Dessert</string>
     <string name="drink">Drink</string>
     <string name="must_select_item">You must select an item from the menu</string>
     <string name="notify_ahead">Notify me one hour ahead</string>
     <string name="order_is_closed">The order is closed</string>
     <string name="restart_order">Restart</string>
+    <string name="total">Total</string>
 
 </resources>

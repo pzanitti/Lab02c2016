@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,13 +22,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+import static ar.edu.utn.frsf.dam.ggz.lab02c2016.R.string.must_select_item;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
     DecimalFormat f = new DecimalFormat("##.00");
 
     ElementoMenu[] listaBebidas;
     ElementoMenu[] listaPlatos;
     ElementoMenu[] listaPostre;
-    boolean orderConfirmed = false;
+
+    private ListView listView;
+    private TextView displayOrderTextView;
+
+    private ArrayAdapter<ElementoMenu> entreeListAdapter;
+    private ArrayAdapter<ElementoMenu> dessertListAdapter;
+    private ArrayAdapter<ElementoMenu> drinkListAdapter;
+
+    final private Order order = new Order();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,33 +53,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         addButton.setOnClickListener(this);
         confirmOrderButton.setOnClickListener(this);
         restartOrderButton.setOnClickListener(this);
+
+        iniciarListas();
+        entreeListAdapter = new ArrayAdapter<ElementoMenu>(this, android.R.layout.simple_list_item_single_choice, listaPlatos);
+        dessertListAdapter = new ArrayAdapter<ElementoMenu>(this, android.R.layout.simple_list_item_single_choice, listaPostre);
+        drinkListAdapter = new ArrayAdapter<ElementoMenu>(this, android.R.layout.simple_list_item_single_choice, listaBebidas);
+
+        listView = (ListView) findViewById(R.id.listView);
+        listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+
+        displayOrderTextView = (TextView) findViewById(R.id.displayOrderTextView);
+
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        radioGroup.setOnCheckedChangeListener(this);
     }
 
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
+
             case R.id.addButton:
-                if (this.orderConfirmed) {
+                if (order.isConfirmed()) {
                     Toast.makeText(MainActivity.this, R.string.order_is_closed, Toast.LENGTH_SHORT).show();
                     break;
                 }
 
-                // No debería ser radioGroup, debería ser el radio de los items
-                RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-                if (radioGroup.getCheckedRadioButtonId() == -1) {
-                    Toast.makeText(MainActivity.this, R.string.must_select_item, Toast.LENGTH_SHORT).show();
-                } else {
-                    // Agregar item a displayOrderTextView
+                int index = listView.getSelectedItemPosition();
+                ElementoMenu selected = (ElementoMenu) listView.getItemAtPosition(listView.getCheckedItemPosition());
+                if (selected == null) {
+                    Toast.makeText(MainActivity.this, must_select_item, Toast.LENGTH_SHORT).show();
+                    break;
                 }
+                order.add(selected);
+                displayOrderTextView.setText(order.toString());
                 break;
+
             case R.id.confirmOrderButton:
-                this.orderConfirmed = true;
-                // Agregar precio total al final de displayOrderTextView
+                if(order.isEmpty()) {
+                    Toast.makeText(MainActivity.this, must_select_item, Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                order.setConfirmed(true);
+                displayOrderTextView.setText(order.toString());
                 break;
+
             case R.id.restartOrderButton:
-                this.orderConfirmed = false;
-                // Limpiar displayOrderTextView
+                order.clear();
+                displayOrderTextView.setText(order.toString());
                 break;
         }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup arg0, int id) {
+        switch(id) {
+
+            case R.id.entreeRadioButton:
+                listView.setAdapter(entreeListAdapter);
+                break;
+
+
+            case R.id.dessertRadioButton:
+                listView.setAdapter(dessertListAdapter);
+                break;
+
+
+            case R.id.drinkRadioButton:
+                listView.setAdapter(drinkListAdapter);
+                break;
+        }
+
     }
 
     class ElementoMenu {
@@ -118,6 +173,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public String toString() {
             return this.nombre+ "( "+f.format(this.precio)+")";
+        }
+    }
+
+
+    class Order {
+        private boolean confirmed = false;
+        final private ArrayList<ElementoMenu> contents = new ArrayList<ElementoMenu>();
+
+        public boolean isConfirmed() {
+            return confirmed;
+        }
+
+        public void setConfirmed(boolean confirmed)  {
+            if(isEmpty() && confirmed) throw new IllegalStateException("Cannot confirm an empty order");
+            this.confirmed = confirmed;
+        }
+
+        public boolean isEmpty() {
+            return contents.isEmpty();
+        }
+
+        public void clear() {
+            contents.clear();
+            confirmed = false;
+        }
+
+        public void add(ElementoMenu item) {
+            if(item == null) throw new NullPointerException("Argument cannot be null");
+            if(confirmed) throw new IllegalStateException("Cannot add to a confirmed order");
+            contents.add(item);
+        }
+
+        public double getTotalPrice() {
+            double total = 0.0;
+            for(ElementoMenu item : contents) {
+                //NOTE: Summing doubles - when formatted as decimals, the totals may not add up!
+                total += item.getPrecio();
+            }
+            return total;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            for(ElementoMenu item : contents) {
+                sb.append(item.toString()); sb.append('\n');
+            }
+            if(confirmed) {
+                sb.append(R.string.total); sb.append(' '); sb.append(f.format(getTotalPrice()));
+                sb.append('\n');
+            }
+            return sb.toString();
         }
     }
 

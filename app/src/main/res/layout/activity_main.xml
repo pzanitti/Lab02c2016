@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:text="@string/drink"
             android:id="@+id/drinkRadioButton"
-            android:checked="true" />
+            android:checked="false" />
     </RadioGroup>
 
     <Button

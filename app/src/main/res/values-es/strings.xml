@@ -7,11 +7,12 @@
     <string name="confirm_order">Confirmar pedido</string>
     <string name="drink">Bebida</string>
     <string name="entree">Plato</string>
-    <string name="must_select_item">Debe seleccionar algo del menu</string>
+    <string name="must_select_item">Debés seleccionar algo del menú</string>
     <string name="notify_ahead">Notificar de reserva 1 hora antes</string>
     <string name="order_is_closed">El pedido se encuentra cerrado</string>
     <string name="order_your_dinner">Pedite la cena!!</string>
     <string name="reservation">RESERVAR MESA</string>
     <string name="restart_order">Reiniciar</string>
     <string name="select_time">Seleccionar horario:</string>
+    <string name="total">Total</string>
 </resources>
